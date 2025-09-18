@@ -1,22 +1,4 @@
 {
-  "functions": {
-    "supabase/functions/submit-form/index.ts": {
-      "env": {
-        "SB_URL": "https://igjmwawkepypqdyoljgl.supabase.co",
-        "SB_SERVICE_ROLE_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imlnam13YXdrZXB5cHFkeW9samdsIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1NTYzNDU4MywiZXhwIjoyMDcxMjEwNTgzfQ.REPLACE_WITH_YOUR_ACTUAL_SERVICE_ROLE_KEY"
-      }
-    },
-    "supabase/functions/recover-payment/index.ts": {
-      "env": {
-        "SB_URL": "https://igjmwawkepypqdyoljgl.supabase.co",
-        "SB_SERVICE_ROLE_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imlnam13YXdrZXB5cHFkeW9samdsIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1NTYzNDU4MywiZXhwIjoyMDcxMjEwNTgzfQ.REPLACE_WITH_YOUR_ACTUAL_SERVICE_ROLE_KEY"
-      }
-    },
-    "supabase/functions/mp-webhook/index.ts": {
-      "env": {
-        "SB_URL": "https://igjmwawkepypqdyoljgl.supabase.co",
-        "SB_SERVICE_ROLE_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imlnam13YXdrZXB5cHFkeW9samdsIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1NTYzNDU4MywiZXhwIjoyMDcxMjEwNTgzfQ.REPLACE_WITH_YOUR_ACTUAL_SERVICE_ROLE_KEY"
-      }
-    }
-  }
+  "buildCommand": "npm run build",
+  "outputDirectory": "dist"
 }
