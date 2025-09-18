@@ -21,11 +21,11 @@ type Payload = {
   cnpj: string;
   numero_fieis: string;
   modelo_desejado: string;
-  banco: string;
-  banco_numero: string;
-  agencia: string;
-  conta: string;
-  correntista_nome: string;
+  banco?: string;
+  banco_numero?: string;
+  agencia?: string;
+  conta?: string;
+  correntista_nome?: string;
 };
 
 function isValidPayload(body: unknown): body is Payload {
@@ -40,11 +40,6 @@ function isValidPayload(body: unknown): body is Payload {
     "cnpj",
     "numero_fieis",
     "modelo_desejado",
-    "banco",
-    "banco_numero",
-    "agencia",
-    "conta",
-    "correntista_nome",
   ];
   for (const key of required) {
     if (typeof b[key] !== "string" || (b[key] as string).trim().length === 0) {
@@ -138,25 +133,33 @@ export const handler = async (req: Request): Promise<Response> => {
       modelo_desejado: body.modelo_desejado
     });
 
-    const { error } = await supabase.from("igreja_cadastros").insert([
-      {
-        nome_pastor: body.nome_pastor,
-        telefone: body.telefone,
-        email: body.email,
-        endereco: body.endereco,
-        cep: body.cep,
-        cnpj: body.cnpj,
-        numero_fieis: body.numero_fieis,
-        modelo_desejado: body.modelo_desejado,
-        banco: body.banco,
-        banco_numero: body.banco_numero,
-        agencia: body.agencia,
-        conta: body.conta,
-        correntista_nome: body.correntista_nome
-      }
-    ]);
+    const insertData = {
+      nome_pastor: body.nome_pastor.trim(),
+      telefone: body.telefone.trim(),
+      email: body.email.trim().toLowerCase(),
+      endereco: body.endereco.trim(),
+      cep: body.cep.replace(/\D/g, ''), // Remove caracteres não numéricos
+      cnpj: body.cnpj.replace(/\D/g, ''), // Remove caracteres não numéricos
+      numero_fieis: body.numero_fieis.trim(),
+      modelo_desejado: body.modelo_desejado.trim(),
+      banco: body.banco?.trim() || null,
+      banco_numero: body.banco_numero?.trim() || null,
+      agencia: body.agencia?.trim() || null,
+      conta: body.conta?.trim() || null,
+      correntista_nome: body.correntista_nome?.trim() || null
+    };
+
+    console.log("🔍 DEBUG - Dados processados para inserção:", insertData);
+
+    const { data, error } = await supabase
+      .from("igreja_cadastros")
+      .insert([insertData])
+      .select();
 
     console.log("🔍 DEBUG - Resultado da inserção:", error ? "❌ Erro" : "✅ Sucesso");
+    if (data) {
+      console.log("🔍 DEBUG - Dados inseridos:", data);
+    }
 
     if (error) {
       console.error("insert_failed", error);
