@@ -458,7 +458,7 @@ const PastorForm = () => {
                             <FormLabel className="text-unni-text-primary">Banco - Número</FormLabel>
                             <FormControl>
                               <Input 
-                                placeholder="Código do banco (ex: 341)"
+                                placeholder="Código do banco (ex: 461)"
                                 className="bg-muted/50 border-border focus:border-unni-cyan text-foreground"
                                 {...field}
                               />
