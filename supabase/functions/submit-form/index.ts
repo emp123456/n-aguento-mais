@@ -109,14 +109,34 @@ export const handler = async (req: Request): Promise<Response> => {
 
     // Use secrets without the reserved SUPABASE_ prefix
     // @ts-ignore - Deno environment
-    const supabaseUrl = Deno.env.get("SB_URL");
+    const supabaseUrl = Deno.env.get("SB_URL") || Deno.env.get("SUPABASE_URL");
     // @ts-ignore - Deno environment
-    const supabaseServiceKey = Deno.env.get("SB_SERVICE_ROLE_KEY");
+    const supabaseServiceKey = Deno.env.get("SB_SERVICE_ROLE_KEY") || Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
+    
+    console.log("🔍 DEBUG - Supabase URL:", supabaseUrl ? "✅ Configurada" : "❌ Não configurada");
+    console.log("🔍 DEBUG - Service Key:", supabaseServiceKey ? "✅ Configurada" : "❌ Não configurada");
+    
     if (!supabaseUrl || !supabaseServiceKey) {
-      return new Response(JSON.stringify({ error: "server_misconfigured" }), { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+      console.error("❌ ERRO - Variáveis do Supabase não configuradas");
+      console.error("SB_URL:", supabaseUrl);
+      console.error("SB_SERVICE_ROLE_KEY:", supabaseServiceKey ? "Presente" : "Ausente");
+      return new Response(JSON.stringify({ 
+        error: "server_misconfigured",
+        details: "Variáveis de ambiente do Supabase não configuradas",
+        debug: {
+          hasUrl: !!supabaseUrl,
+          hasKey: !!supabaseServiceKey
+        }
+      }), { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } });
     }
 
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
+
+    console.log("🔍 DEBUG - Tentando inserir dados:", {
+      nome_pastor: body.nome_pastor,
+      email: body.email,
+      modelo_desejado: body.modelo_desejado
+    });
 
     const { error } = await supabase.from("igreja_cadastros").insert([
       {
@@ -136,9 +156,16 @@ export const handler = async (req: Request): Promise<Response> => {
       }
     ]);
 
+    console.log("🔍 DEBUG - Resultado da inserção:", error ? "❌ Erro" : "✅ Sucesso");
+
     if (error) {
       console.error("insert_failed", error);
-      return new Response(JSON.stringify({ error: "insert_failed" }), { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+      console.error("Error details:", JSON.stringify(error, null, 2));
+      return new Response(JSON.stringify({ 
+        error: "insert_failed", 
+        details: error.message,
+        code: error.code 
+      }), { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } });
     }
 
     // Retorno sem integração de pagamento online
