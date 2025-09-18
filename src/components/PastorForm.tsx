@@ -31,13 +31,11 @@ const pastorFormSchema = z.object({
     .regex(/^\d{2}[.\s]?\d{3}[.\s]?\d{3}[\/\s]?\d{4}[-\s]?\d{2}$/, "CNPJ inválido"),
   numero_fieis: z.string().min(1, "Selecione o número de fiéis"),
   modelo_desejado: z.string().min(1, "Selecione um modelo"),
-  banco: z.string().min(2, "Banco é obrigatório"),
-  banco_numero: z.string()
-    .min(1, "Código do banco é obrigatório")
-    .regex(/^\d{1,3}$/, "Código do banco deve ter 1 a 3 dígitos"),
-  agencia: z.string().min(3, "Agência inválida"),
-  conta: z.string().min(3, "Conta inválida"),
-  correntista_nome: z.string().min(2, "Nome do correntista é obrigatório"),
+  banco: z.string().optional(),
+  banco_numero: z.string().optional(),
+  agencia: z.string().optional(),
+  conta: z.string().optional(),
+  correntista_nome: z.string().optional(),
 });
 
 type PastorFormData = z.infer<typeof pastorFormSchema>;
@@ -169,16 +167,18 @@ const PastorForm = () => {
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
         console.error("❌ ERRO - Resposta não OK:", errorData);
-        throw new Error(errorData.error || "Falha ao enviar. Tente novamente mais tarde.");
+        console.error("❌ ERRO - Detalhes:", errorData.details);
+        console.error("❌ ERRO - Código:", errorData.code);
+        throw new Error(errorData.details || errorData.error || "Falha ao enviar. Tente novamente mais tarde.");
       }
 
       const result = await response.json();
       console.log("🔍 DEBUG - Resultado da resposta:", result);
       
       // Salvar dados básicos do pedido para eventual consulta
-      if (result.ok && result.trackingId) {
+      if (result.ok) {
         const paymentData = {
-          id: result.trackingId,
+          id: `pedido_${Date.now()}`,
           nome_pastor: data.nome_pastor,
           email: data.email,
           modelo_desejado: data.modelo_desejado,
@@ -187,7 +187,6 @@ const PastorForm = () => {
             : data.modelo_desejado.includes("Modelo B")
               ? 229.00
               : 169.00,
-          tracking_id: result.trackingId,
           created_at: new Date().toISOString()
         };
         localStorage.setItem("pendingPayment", JSON.stringify(paymentData));
@@ -431,7 +430,7 @@ const PastorForm = () => {
                   />
 
                   <div className="pt-2">
-                    <h4 className="text-unni-blue-light font-semibold mb-2">Dados bancários</h4>
+                    <h4 className="text-unni-blue-light font-semibold mb-2">Dados bancários (opcional)</h4>
                     <div className="grid md:grid-cols-2 gap-4">
                       <FormField
                         control={form.control}
