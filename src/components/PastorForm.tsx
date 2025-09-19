@@ -476,7 +476,7 @@ const PastorForm = () => {
                             <FormLabel className="text-unni-text-primary">Agência</FormLabel>
                             <FormControl>
                               <Input 
-                                placeholder="Agência (somente números)"
+                                placeholder="Opcional"
                                 className="bg-muted/50 border-border focus:border-unni-cyan text-foreground"
                                 {...field}
                               />
