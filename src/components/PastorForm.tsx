@@ -515,7 +515,7 @@ const PastorForm = () => {
                             <FormLabel className="text-unni-text-primary">Banco</FormLabel>
                             <FormControl>
                               <Input 
-                                placeholder="Nome do banco (ex: Itaú, Bradesco)"
+                                placeholder="Opcional"
                                 className="bg-muted/50 border-border focus:border-unni-cyan text-foreground"
                                 {...field}
                               />
@@ -533,7 +533,7 @@ const PastorForm = () => {
                             <FormLabel className="text-unni-text-primary">Banco - Número</FormLabel>
                             <FormControl>
                               <Input 
-                                placeholder="Código do banco (ex: 341)"
+                                placeholder="Opcional"
                                 className="bg-muted/50 border-border focus:border-unni-cyan text-foreground"
                                 {...field}
                               />
@@ -551,7 +551,7 @@ const PastorForm = () => {
                             <FormLabel className="text-unni-text-primary">Agência</FormLabel>
                             <FormControl>
                               <Input 
-                                placeholder="Agência (somente números)"
+                                placeholder="Opcional"
                                 className="bg-muted/50 border-border focus:border-unni-cyan text-foreground"
                                 {...field}
                               />
@@ -569,7 +569,7 @@ const PastorForm = () => {
                             <FormLabel className="text-unni-text-primary">Conta</FormLabel>
                             <FormControl>
                               <Input 
-                                placeholder="Conta (com dígito, se houver)"
+                                placeholder="Opcional"
                                 className="bg-muted/50 border-border focus:border-unni-cyan text-foreground"
                                 {...field}
                               />
@@ -587,7 +587,7 @@ const PastorForm = () => {
                             <FormLabel className="text-unni-text-primary">Correntista - Nome</FormLabel>
                             <FormControl>
                               <Input 
-                                placeholder="Nome completo do correntista"
+                                placeholder="Opcional"
                                 className="bg-muted/50 border-border focus:border-unni-cyan text-foreground"
                                 {...field}
                               />
