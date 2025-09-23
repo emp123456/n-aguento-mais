@@ -203,7 +203,7 @@ const PastorForm = () => {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imlnam13YXdrZXB5cHFkeW9samdsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTU2MzQ1ODMsImV4cCI6MjA3MTIxMDU4M30.TPGLDO7W3bSuXgXBKdll_SwTVLFI_qDw_aWpERcILQ0",
+          "Authorization": `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
         },
         body: JSON.stringify({ ...data, captchaToken: token ?? captchaToken }),
       });
@@ -515,7 +515,7 @@ const PastorForm = () => {
                             <FormLabel className="text-unni-text-primary">Banco</FormLabel>
                             <FormControl>
                               <Input 
-                                placeholder="Opcional"
+                                placeholder="Nome do banco (ex: Itaú, Bradesco)"
                                 className="bg-muted/50 border-border focus:border-unni-cyan text-foreground"
                                 {...field}
                               />
@@ -533,7 +533,7 @@ const PastorForm = () => {
                             <FormLabel className="text-unni-text-primary">Banco - Número</FormLabel>
                             <FormControl>
                               <Input 
-                                placeholder="Opcional"
+                                placeholder="Código do banco (ex: 341)"
                                 className="bg-muted/50 border-border focus:border-unni-cyan text-foreground"
                                 {...field}
                               />
@@ -551,7 +551,7 @@ const PastorForm = () => {
                             <FormLabel className="text-unni-text-primary">Agência</FormLabel>
                             <FormControl>
                               <Input 
-                                placeholder="Opcional"
+                                placeholder="Agência (somente números)"
                                 className="bg-muted/50 border-border focus:border-unni-cyan text-foreground"
                                 {...field}
                               />
@@ -569,7 +569,7 @@ const PastorForm = () => {
                             <FormLabel className="text-unni-text-primary">Conta</FormLabel>
                             <FormControl>
                               <Input 
-                                placeholder="Opcional"
+                                placeholder="Conta (com dígito, se houver)"
                                 className="bg-muted/50 border-border focus:border-unni-cyan text-foreground"
                                 {...field}
                               />
@@ -587,7 +587,7 @@ const PastorForm = () => {
                             <FormLabel className="text-unni-text-primary">Correntista - Nome</FormLabel>
                             <FormControl>
                               <Input 
-                                placeholder="Opcional"
+                                placeholder="Nome completo do correntista"
                                 className="bg-muted/50 border-border focus:border-unni-cyan text-foreground"
                                 {...field}
                               />
