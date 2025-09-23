@@ -14,7 +14,8 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Send, Church } from "lucide-react";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Send, Church, CheckCircle } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import { useEffect, useState } from "react";
 
@@ -72,8 +73,21 @@ const PastorForm = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [captchaToken, setCaptchaToken] = useState<string | null>(null);
   const [captchaReady, setCaptchaReady] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
 
   useEffect(() => {
+    // Detectar dispositivo móvel
+    const checkMobile = () => {
+      const isMobileDevice = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ||
+        window.innerWidth <= 768 ||
+        ('ontouchstart' in window);
+      setIsMobile(isMobileDevice);
+    };
+    
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    
     // Carregar hCaptcha
     const siteKey = import.meta.env.VITE_HCAPTCHA_SITEKEY as string | undefined;
     if (!siteKey) return;
@@ -82,7 +96,9 @@ const PastorForm = () => {
     script.async = true;
     script.onload = () => setCaptchaReady(true);
     document.body.appendChild(script);
+    
     return () => {
+      window.removeEventListener('resize', checkMobile);
       document.body.removeChild(script);
     };
   }, []);
@@ -196,19 +212,14 @@ const PastorForm = () => {
       // Sem redirecionamento para checkout externo
       if (result.ok) {
         console.log("Formulário enviado, mas sem URL de pagamento:", result);
-        toast({
-          title: "Formulário enviado com sucesso!",
-          description: "Entraremos em contato em breve para finalizar seu pedido.",
-        });
+        // Mostrar modal de sucesso em vez de toast
+        setShowSuccessModal(true);
         form.reset();
         return;
       }
 
-      toast({
-        title: "Formulário enviado com sucesso!",
-        description: "Entraremos em contato em breve.",
-      });
-
+      // Fallback para outros casos de sucesso
+      setShowSuccessModal(true);
       form.reset();
     } catch (error: any) {
       console.error("❌ ERRO - Erro ao enviar formulário:", error);
@@ -239,21 +250,23 @@ const PastorForm = () => {
   ];
 
   return (
-    <section id="contato" className="py-20 px-4 bg-unni-navy">
+    <section id="contato" className="py-8 px-4 bg-unni-navy lg:py-20">
       <div className="max-w-4xl mx-auto">
-        <div className="text-center mb-12">
-          <div className="flex items-center justify-center gap-3 mb-4">
-            <Church className="h-8 w-8 text-unni-cyan" />
-            <h2 className="text-3xl md:text-4xl font-bold text-unni-blue-light">
+        {/* Mobile-first: Smaller spacing and text */}
+        <div className="text-center mb-8 lg:mb-12">
+          <div className="flex items-center justify-center gap-2 mb-3 lg:gap-3 lg:mb-4">
+            <Church className="h-6 w-6 text-unni-cyan lg:h-8 lg:w-8" />
+            <h2 className="text-2xl font-bold text-unni-blue-light lg:text-3xl xl:text-4xl">
               Conecte sua Igreja!
             </h2>
           </div>
-          <p className="text-unni-text-secondary text-lg max-w-2xl mx-auto">
+          <p className="text-unni-text-secondary text-base max-w-2xl mx-auto lg:text-lg">
             Preencha o formulário abaixo para realizar seu pedido.
           </p>
         </div>
 
-        <div className="grid lg:grid-cols-2 gap-8 items-start">
+        {/* Mobile-first: Single column, then grid on larger screens */}
+        <div className="space-y-6 lg:grid lg:grid-cols-2 lg:gap-8 lg:items-start lg:space-y-0">
           <Card className="bg-card/50 backdrop-blur-sm border-border">
             <CardHeader>
               <CardTitle className="text-unni-blue-light">Cadastro da Igreja</CardTitle>
@@ -337,7 +350,8 @@ const PastorForm = () => {
                     )}
                   />
 
-                  <div className="grid md:grid-cols-2 gap-4">
+                  {/* Mobile-first: Single column, then grid */}
+                  <div className="space-y-4 md:grid md:grid-cols-2 md:gap-4 md:space-y-0">
                     <FormField
                       control={form.control}
                       name="cep"
@@ -387,9 +401,21 @@ const PastorForm = () => {
                               <SelectValue placeholder="Selecione a quantidade" />
                             </SelectTrigger>
                           </FormControl>
-                          <SelectContent className="bg-popover border-border">
+                          <SelectContent 
+                            className="bg-popover border-border max-h-[150px] overflow-y-auto"
+                            position={isMobile ? "item-aligned" : "popper"}
+                            sideOffset={0}
+                            align="start"
+                            avoidCollisions={true}
+                            collisionPadding={4}
+                            side="bottom"
+                          >
                             {fieisOptions.map((option) => (
-                              <SelectItem key={option} value={option} className="text-foreground hover:bg-muted">
+                              <SelectItem 
+                                key={option} 
+                                value={option} 
+                                className="text-foreground hover:bg-muted min-h-[44px] py-3 px-4 text-base touch-manipulation"
+                              >
                                 {option}
                               </SelectItem>
                             ))}
@@ -412,14 +438,31 @@ const PastorForm = () => {
                               <SelectValue placeholder="Selecione um modelo" />
                             </SelectTrigger>
                           </FormControl>
-                          <SelectContent className="bg-popover border-border">
-                            <SelectItem value="Modelo A - (Promoção) R$169,00/mês (30 conexões simultaneas)" className="text-foreground hover:bg-muted">
+                          <SelectContent 
+                            className="bg-popover border-border max-h-[150px] overflow-y-auto"
+                            position={isMobile ? "item-aligned" : "popper"}
+                            sideOffset={0}
+                            align="start"
+                            avoidCollisions={true}
+                            collisionPadding={4}
+                            side="bottom"
+                          >
+                            <SelectItem 
+                              value="Modelo A - (Promoção) R$169,00/mês (30 conexões simultaneas)" 
+                              className="text-foreground hover:bg-muted min-h-[44px] py-3 px-4 text-base touch-manipulation"
+                            >
                               Modelo A - (Promoção) R$169,00/mês (30 conexões simultaneas)
                             </SelectItem>
-                            <SelectItem value="Modelo B - (Promoção) R$229,00/mês (50 conexões simultaneas)" className="text-foreground hover:bg-muted">
+                            <SelectItem 
+                              value="Modelo B - (Promoção) R$229,00/mês (50 conexões simultaneas)" 
+                              className="text-foreground hover:bg-muted min-h-[44px] py-3 px-4 text-base touch-manipulation"
+                            >
                               Modelo B - (Promoção) R$229,00/mês (50 conexões simultaneas)
                             </SelectItem>
-                            <SelectItem value="Modelo C - (Promoção) R$499,00/mês (200 conexões simultaneas)" className="text-foreground hover:bg-muted">
+                            <SelectItem 
+                              value="Modelo C - (Promoção) R$499,00/mês (200 conexões simultaneas)" 
+                              className="text-foreground hover:bg-muted min-h-[44px] py-3 px-4 text-base touch-manipulation"
+                            >
                               Modelo C - (Promoção) R$499,00/mês (200 conexões simultaneas)
                             </SelectItem>
                           </SelectContent>
@@ -431,7 +474,8 @@ const PastorForm = () => {
 
                   <div className="pt-2">
                     <h4 className="text-unni-blue-light font-semibold mb-2">Dados bancários (opcional)</h4>
-                    <div className="grid md:grid-cols-2 gap-4">
+                    {/* Mobile-first: Single column, then grid */}
+                    <div className="space-y-4 md:grid md:grid-cols-2 md:gap-4 md:space-y-0">
                       <FormField
                         control={form.control}
                         name="banco"
@@ -440,7 +484,7 @@ const PastorForm = () => {
                             <FormLabel className="text-unni-text-primary">Banco</FormLabel>
                             <FormControl>
                               <Input 
-                                placeholder="Opcional"
+                                placeholder="Nome do banco (ex: Itaú, Bradesco)"
                                 className="bg-muted/50 border-border focus:border-unni-cyan text-foreground"
                                 {...field}
                               />
@@ -458,7 +502,7 @@ const PastorForm = () => {
                             <FormLabel className="text-unni-text-primary">Banco - Número</FormLabel>
                             <FormControl>
                               <Input 
-                                placeholder="Opcional"
+                                placeholder="Código do banco (ex: 341)"
                                 className="bg-muted/50 border-border focus:border-unni-cyan text-foreground"
                                 {...field}
                               />
@@ -476,7 +520,7 @@ const PastorForm = () => {
                             <FormLabel className="text-unni-text-primary">Agência</FormLabel>
                             <FormControl>
                               <Input 
-                                placeholder="Opcional"
+                                placeholder="Agência (somente números)"
                                 className="bg-muted/50 border-border focus:border-unni-cyan text-foreground"
                                 {...field}
                               />
@@ -494,7 +538,7 @@ const PastorForm = () => {
                             <FormLabel className="text-unni-text-primary">Conta</FormLabel>
                             <FormControl>
                               <Input 
-                                placeholder="Opcional"
+                                placeholder="Conta (com dígito, se houver)"
                                 className="bg-muted/50 border-border focus:border-unni-cyan text-foreground"
                                 {...field}
                               />
@@ -512,7 +556,7 @@ const PastorForm = () => {
                             <FormLabel className="text-unni-text-primary">Correntista - Nome</FormLabel>
                             <FormControl>
                               <Input 
-                                placeholder="Opcional"
+                                placeholder="Nome completo do correntista"
                                 className="bg-muted/50 border-border focus:border-unni-cyan text-foreground"
                                 {...field}
                               />
@@ -524,14 +568,17 @@ const PastorForm = () => {
                     </div>
                   </div>
                   
+                  {/* Mobile-first: Larger button for touch */}
                   <Button 
                     type="submit" 
                     disabled={isSubmitting}
-                    className="w-full bg-gradient-to-r from-unni-cyan to-unni-blue-light text-unni-navy font-semibold hover:shadow-lg hover:shadow-unni-cyan/25 transition-all duration-300 disabled:opacity-60 disabled:cursor-not-allowed"
+                    className="w-full h-14 bg-gradient-to-r from-unni-cyan to-unni-blue-light text-unni-navy font-semibold hover:shadow-lg hover:shadow-unni-cyan/25 transition-all duration-300 disabled:opacity-60 disabled:cursor-not-allowed lg:h-12"
                     size="lg"
                   >
-                    <Send className="mr-2 h-4 w-4" />
-                    {isSubmitting ? "Enviando..." : "ENVIAR PEDIDO"}
+                    <Send className="mr-2 h-5 w-5 lg:h-4 lg:w-4" />
+                    <span className="text-base lg:text-sm">
+                      {isSubmitting ? "Enviando..." : "ENVIAR PEDIDO"}
+                    </span>
                   </Button>
 
                   <div className="text-center space-y-2">
@@ -550,36 +597,37 @@ const PastorForm = () => {
             </CardContent>
           </Card>
 
-          <div className="flex flex-col gap-6">
-            <Card className="order-2 bg-card/50 backdrop-blur-sm border-border">
-              <CardContent className="p-6">
-                <h3 className="text-xl font-semibold text-unni-blue-light mb-4">
+          {/* Mobile-first: Cards stack vertically, then side-by-side on desktop */}
+          <div className="space-y-6 lg:flex lg:flex-col lg:gap-6">
+            <Card className="bg-card/50 backdrop-blur-sm border-border lg:order-2">
+              <CardContent className="p-4 lg:p-6">
+                <h3 className="text-lg font-semibold text-unni-blue-light mb-3 lg:text-xl lg:mb-4">
                   Precisa de ajuda?
                 </h3>
-                <p className="text-unni-text-secondary mb-6">
+                <p className="text-unni-text-secondary mb-4 text-sm lg:text-base lg:mb-6">
                   Entre em contato diretamente conosco via WhatsApp e receba atendimento personalizado.
                 </p>
                 <Button 
                   onClick={handleWhatsAppContact}
-                  className="w-full rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white font-semibold shadow-lg shadow-emerald-500/30 ring-1 ring-emerald-400/20 focus:outline-none focus:ring-2 focus:ring-emerald-400/50"
+                  className="w-full h-12 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white font-semibold shadow-lg shadow-emerald-500/30 ring-1 ring-emerald-400/20 focus:outline-none focus:ring-2 focus:ring-emerald-400/50 lg:h-10"
                   size="lg"
                 >
                   <img 
                     src="/images/pastor-form.png" 
                     alt="WhatsApp" 
-                    className="mr-2 h-5 w-5 object-contain drop-shadow-[0_0_10px_rgba(16,185,129,0.6)]"
+                    className="mr-2 h-5 w-5 object-contain drop-shadow-[0_0_10px_rgba(16,185,129,0.6)] lg:h-4 lg:w-4"
                     decoding="async"
                     referrerPolicy="no-referrer"
                     onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = 'none'; }}
                   />
-                  Falar no WhatsApp
+                  <span className="text-sm lg:text-xs">Falar no WhatsApp</span>
                 </Button>
               </CardContent>
             </Card>
 
-            <Card className="order-1 bg-gradient-to-r from-unni-cyan/10 to-unni-blue-light/10 backdrop-blur-sm border border-unni-cyan/40 shadow-xl">
-              <CardContent className="p-6">
-                <h3 className="text-xl font-semibold text-unni-blue-light mb-4">
+            <Card className="bg-gradient-to-r from-unni-cyan/10 to-unni-blue-light/10 backdrop-blur-sm border border-unni-cyan/40 shadow-xl lg:order-1">
+              <CardContent className="p-4 lg:p-6">
+                <h3 className="text-lg font-semibold text-unni-blue-light mb-3 lg:text-xl lg:mb-4">
                   Modelos de equipamento
                 </h3>
                 <ul className="space-y-3 text-unni-text-secondary">
@@ -639,6 +687,31 @@ const PastorForm = () => {
           </div>
         </div>
       </div>
+
+      {/* Modal de Sucesso - Mobile First */}
+      <Dialog open={showSuccessModal} onOpenChange={setShowSuccessModal}>
+        <DialogContent className="sm:max-w-md mx-auto bg-card border-border">
+          <DialogHeader className="text-center">
+            <div className="flex justify-center mb-4">
+              <CheckCircle className="h-16 w-16 text-emerald-500" />
+            </div>
+            <DialogTitle className="text-xl font-bold text-unni-blue-light">
+              Formulário Enviado!
+            </DialogTitle>
+            <DialogDescription className="text-unni-text-secondary text-base">
+              Seu pedido foi enviado com sucesso. Entraremos em contato em breve para finalizar seu pedido.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="flex justify-center mt-6">
+            <Button 
+              onClick={() => setShowSuccessModal(false)}
+              className="bg-gradient-to-r from-unni-cyan to-unni-blue-light text-unni-navy font-semibold px-8 py-3 h-12 min-w-[120px]"
+            >
+              OK
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </section>
   );
 };
