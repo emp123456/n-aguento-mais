@@ -14,6 +14,7 @@ const corsHeaders = {
 
 type Payload = {
   nome_pastor: string;
+  igreja: string;
   telefone: string;
   email: string;
   endereco: string;
@@ -33,6 +34,7 @@ function isValidPayload(body: unknown): body is Payload {
   const b = body as Record<string, unknown>;
   const required = [
     "nome_pastor",
+    "igreja",
     "telefone",
     "email",
     "endereco",
@@ -108,33 +110,21 @@ export const handler = async (req: Request): Promise<Response> => {
     // @ts-ignore - Deno environment
     const supabaseServiceKey = Deno.env.get("SB_SERVICE_ROLE_KEY") || Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
     
-    console.log("🔍 DEBUG - Supabase URL:", supabaseUrl ? "✅ Configurada" : "❌ Não configurada");
-    console.log("🔍 DEBUG - Service Key:", supabaseServiceKey ? "✅ Configurada" : "❌ Não configurada");
     
     if (!supabaseUrl || !supabaseServiceKey) {
       console.error("❌ ERRO - Variáveis do Supabase não configuradas");
-      console.error("SB_URL:", supabaseUrl);
-      console.error("SB_SERVICE_ROLE_KEY:", supabaseServiceKey ? "Presente" : "Ausente");
       return new Response(JSON.stringify({ 
         error: "server_misconfigured",
-        details: "Variáveis de ambiente do Supabase não configuradas",
-        debug: {
-          hasUrl: !!supabaseUrl,
-          hasKey: !!supabaseServiceKey
-        }
+        details: "Variáveis de ambiente do Supabase não configuradas"
       }), { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } });
     }
 
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
-    console.log("🔍 DEBUG - Tentando inserir dados:", {
-      nome_pastor: body.nome_pastor,
-      email: body.email,
-      modelo_desejado: body.modelo_desejado
-    });
 
     const insertData = {
       nome_pastor: body.nome_pastor.trim(),
+      igreja: body.igreja ? body.igreja.trim() : '',
       telefone: body.telefone.trim(),
       email: body.email.trim().toLowerCase(),
       endereco: body.endereco.trim(),
@@ -149,21 +139,15 @@ export const handler = async (req: Request): Promise<Response> => {
       correntista_nome: body.correntista_nome?.trim() || null
     };
 
-    console.log("🔍 DEBUG - Dados processados para inserção:", insertData);
 
     const { data, error } = await supabase
       .from("igreja_cadastros")
       .insert([insertData])
       .select();
 
-    console.log("🔍 DEBUG - Resultado da inserção:", error ? "❌ Erro" : "✅ Sucesso");
-    if (data) {
-      console.log("🔍 DEBUG - Dados inseridos:", data);
-    }
 
     if (error) {
       console.error("insert_failed", error);
-      console.error("Error details:", JSON.stringify(error, null, 2));
       return new Response(JSON.stringify({ 
         error: "insert_failed", 
         details: error.message,
@@ -188,5 +172,3 @@ export const handler = async (req: Request): Promise<Response> => {
 // Deno entrypoint
 // @ts-ignore - Deno environment
 Deno.serve(handler);
-
-
