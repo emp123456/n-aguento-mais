@@ -712,7 +712,7 @@ const PastorForm = () => {
                   </li>
                   <li className="flex items-start gap-2">
                     <div className="w-2 h-2 bg-amber-400 rounded-full mt-2 flex-shrink-0"></div>
-                    <span><span className="font-semibold">Modelo de contratação:</span> locação de equipamentos</span>
+                    <span><span className="font-semibold">Taxa única de envio e ativação:</span> R$92,00</span>
                   </li>
                   <li className="flex items-start gap-2">
                     <div className="w-2 h-2 bg-amber-400 rounded-full mt-2 flex-shrink-0"></div>
