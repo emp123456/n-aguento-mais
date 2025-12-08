@@ -14,6 +14,7 @@ const corsHeaders = {
 
 type Payload = {
   nome_pastor: string;
+  cpf_pastor: string;
   igreja: string;
   telefone: string;
   email: string;
@@ -34,6 +35,7 @@ function isValidPayload(body: unknown): body is Payload {
   const b = body as Record<string, unknown>;
   const required = [
     "nome_pastor",
+    "cpf_pastor",
     "igreja",
     "telefone",
     "email",
@@ -124,6 +126,7 @@ export const handler = async (req: Request): Promise<Response> => {
 
     const insertData = {
       nome_pastor: body.nome_pastor.trim(),
+      cpf_pastor: body.cpf_pastor.replace(/\D/g, ''), // Remove caracteres não numéricos
       igreja: body.igreja ? body.igreja.trim() : '',
       telefone: body.telefone.trim(),
       email: body.email.trim().toLowerCase(),
