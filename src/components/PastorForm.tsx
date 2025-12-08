@@ -21,6 +21,9 @@ import { useEffect, useState } from "react";
 
 const pastorFormSchema = z.object({
   nome_pastor: z.string().min(2, "Nome deve ter pelo menos 2 caracteres"),
+  cpf_pastor: z.string()
+    .min(11, "CPF deve ter pelo menos 11 dígitos")
+    .regex(/^\d{3}[.\s]?\d{3}[.\s]?\d{3}[-\s]?\d{2}$/, "CPF inválido"),
   igreja: z.string().min(2, "Nome da igreja deve ter pelo menos 2 caracteres"),
   telefone: z.string().min(10, "Telefone deve ter pelo menos 10 dígitos"),
   email: z.string().email("Email inválido"),
@@ -56,6 +59,7 @@ const PastorForm = () => {
     resolver: zodResolver(pastorFormSchema),
     defaultValues: {
       nome_pastor: "",
+      cpf_pastor: "",
       igreja: "",
       telefone: "",
       email: "",
@@ -309,6 +313,24 @@ const PastorForm = () => {
                         <FormControl>
                           <Input 
                             placeholder="Digite o nome completo do pastor"
+                            className="bg-muted/50 border-border focus:border-unni-cyan text-foreground"
+                            {...field} 
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="cpf_pastor"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-unni-text-primary">CPF do Pastor*</FormLabel>
+                        <FormControl>
+                          <Input 
+                            placeholder="000.000.000-00"
                             className="bg-muted/50 border-border focus:border-unni-cyan text-foreground"
                             {...field} 
                           />
