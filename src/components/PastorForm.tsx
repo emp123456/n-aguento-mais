@@ -520,13 +520,13 @@ const PastorForm = () => {
                               value="Modelo B - (Promoção) R$229,00/mês (50 conexões simultaneas)" 
                               className="text-foreground hover:bg-muted min-h-[44px] py-3 px-4 text-base touch-manipulation"
                             >
-                              Modelo B - (Promoção) R$269,00/mês (50 conexões simultaneas)
+                              Modelo B - R$269,00/mês (50 conexões simultaneas)
                             </SelectItem>
                             <SelectItem 
                               value="Modelo C - (Promoção) R$499,00/mês (200 conexões simultaneas)" 
                               className="text-foreground hover:bg-muted min-h-[44px] py-3 px-4 text-base touch-manipulation"
                             >
-                              Modelo C - (Promoção) R$599,00/mês (200 conexões simultaneas)
+                              Modelo C - R$599,00/mês (200 conexões simultaneas)
                             </SelectItem>
                           </SelectContent>
                         </Select>
