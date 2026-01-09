@@ -514,19 +514,19 @@ const PastorForm = () => {
                               value="Modelo A - (Promoção) R$169,00/mês (30 conexões simultaneas)" 
                               className="text-foreground hover:bg-muted min-h-[44px] py-3 px-4 text-base touch-manipulation"
                             >
-                              Modelo A - (Promoção) R$169,00/mês (30 conexões simultaneas)
+                              Modelo A - 229,00/mês (30 conexões simultaneas)
                             </SelectItem>
                             <SelectItem 
                               value="Modelo B - (Promoção) R$229,00/mês (50 conexões simultaneas)" 
                               className="text-foreground hover:bg-muted min-h-[44px] py-3 px-4 text-base touch-manipulation"
                             >
-                              Modelo B - (Promoção) R$229,00/mês (50 conexões simultaneas)
+                              Modelo B - (Promoção) R$269,00/mês (50 conexões simultaneas)
                             </SelectItem>
                             <SelectItem 
                               value="Modelo C - (Promoção) R$499,00/mês (200 conexões simultaneas)" 
                               className="text-foreground hover:bg-muted min-h-[44px] py-3 px-4 text-base touch-manipulation"
                             >
-                              Modelo C - (Promoção) R$499,00/mês (200 conexões simultaneas)
+                              Modelo C - (Promoção) R$599,00/mês (200 conexões simultaneas)
                             </SelectItem>
                           </SelectContent>
                         </Select>
@@ -704,7 +704,7 @@ const PastorForm = () => {
                   </li>
                   <li className="flex items-start gap-2">
                     <div className="w-2 h-2 bg-emerald-400 rounded-full mt-2 flex-shrink-0"></div>
-                    <span className="text-white font-semibold">Valor R$169,00 (Promoção Atual) - Valor original R$199,00/mês</span>
+                    <span className="text-white font-semibold">Valor R$229,00/mês</span>
                   </li>
                   <li className="my-2 border-t border-border/40"></li>
                   <li className="flex items-start gap-2">
@@ -717,7 +717,7 @@ const PastorForm = () => {
                   </li>
                   <li className="flex items-start gap-2">
                     <div className="w-2 h-2 bg-sky-400 rounded-full mt-2 flex-shrink-0"></div>
-                    <span className="text-white font-semibold">Valor R$229,00 (Promoção Atual) - Valor original 299,00/mês</span>
+                    <span className="text-white font-semibold">Valor R$299,00</span>
                   </li>
                   <li className="my-2 border-t border-border/40"></li>
                   <li className="flex items-start gap-2">
@@ -730,7 +730,7 @@ const PastorForm = () => {
                   </li>
                   <li className="flex items-start gap-2">
                     <div className="w-2 h-2 bg-violet-400 rounded-full mt-2 flex-shrink-0"></div>
-                    <span className="text-white font-semibold">Valor R$499,00/mês (Promoção Atual) - Valor original R$599,00/mês</span>
+                    <span className="text-white font-semibold">Valor R$599,00/mês</span>
                   </li>
                   <li className="flex items-start gap-2">
                     <div className="w-2 h-2 bg-amber-400 rounded-full mt-2 flex-shrink-0"></div>
